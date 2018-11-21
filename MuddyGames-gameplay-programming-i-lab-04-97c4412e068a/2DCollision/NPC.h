@@ -8,14 +8,18 @@
 
 class NPC : public GameObject
 {
+private:
+	int	m_input = 0;
 
 public:
 	NPC();
 	~NPC();
-	NPC(const AnimatedSprite&);
+	NPC(const AnimatedSprite&, const AnimatedSprite&, const AnimatedSprite&, const AnimatedSprite&, const AnimatedSprite&);
 	AnimatedSprite& getAnimatedSprite();
 	void handleInput(Input);
 	void update();
+
+	int getInput();
 };
 
 #endif // !NPC_H

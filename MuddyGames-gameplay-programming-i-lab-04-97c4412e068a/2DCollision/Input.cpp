@@ -2,7 +2,7 @@
 
 Input::Input() 
 {
-	m_current = IDLE;
+	m_current = Square;
 }
 Input::~Input() {}
 

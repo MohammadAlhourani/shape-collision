@@ -11,48 +11,65 @@
 
 using namespace std;
 
+
 int main()
 {
 	// Create the main window
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
 
 	// Load a NPC's sprites to display
-	sf::Texture npc_texture;
-	if (!npc_texture.loadFromFile("assets\\grid.png")) {
+	sf::Texture Texture;
+	if (!Texture.loadFromFile("assets\\grid.png")) {
 		DEBUG_MSG("Failed to load file");
 		return EXIT_FAILURE;
 	}
 
-	// Load a mouse texture to display
-	sf::Texture player_texture;
-	if (!player_texture.loadFromFile("assets\\player.png")) {
-		DEBUG_MSG("Failed to load file");
-		return EXIT_FAILURE;
-	}
+	// Setup Default Animated Sprite
+	AnimatedSprite Square(Texture);
+	Square.addFrame(sf::IntRect(3, 3, 84, 84));
+	Square.addFrame(sf::IntRect(88, 3, 84, 84));
+	Square.addFrame(sf::IntRect(173, 3, 84, 84));
+	Square.addFrame(sf::IntRect(258, 3, 84, 84));
+	Square.addFrame(sf::IntRect(343, 3, 84, 84));
+	Square.addFrame(sf::IntRect(428, 3, 84, 84));
 
-	// Setup NPC's Default Animated Sprite
-	AnimatedSprite npc_animated_sprite(npc_texture);
-	npc_animated_sprite.addFrame(sf::IntRect(3, 3, 84, 84));
-	npc_animated_sprite.addFrame(sf::IntRect(88, 3, 84, 84));
-	npc_animated_sprite.addFrame(sf::IntRect(173, 3, 84, 84));
-	npc_animated_sprite.addFrame(sf::IntRect(258, 3, 84, 84));
-	npc_animated_sprite.addFrame(sf::IntRect(343, 3, 84, 84));
-	npc_animated_sprite.addFrame(sf::IntRect(428, 3, 84, 84));
+	AnimatedSprite Capsule(Texture);
+	Capsule.addFrame(sf::IntRect(9, 115, 71, 28));
+	Capsule.addFrame(sf::IntRect(94, 115, 71, 28));
+	Capsule.addFrame(sf::IntRect(179, 115, 71, 28));
+	Capsule.addFrame(sf::IntRect(264, 115, 71, 28));
+	Capsule.addFrame(sf::IntRect(349, 115, 71, 28));
+	Capsule.addFrame(sf::IntRect(434, 115, 71, 28));
 
-	// Setup Players Default Animated Sprite
-	AnimatedSprite player_animated_sprite(player_texture);
-	player_animated_sprite.addFrame(sf::IntRect(3, 3, 84, 84));
-	player_animated_sprite.addFrame(sf::IntRect(88, 3, 84, 84));
-	player_animated_sprite.addFrame(sf::IntRect(173, 3, 84, 84));
-	player_animated_sprite.addFrame(sf::IntRect(258, 3, 84, 84));
-	player_animated_sprite.addFrame(sf::IntRect(343, 3, 84, 84));
-	player_animated_sprite.addFrame(sf::IntRect(428, 3, 84, 84));
+	AnimatedSprite Poly(Texture);
+	Poly.addFrame(sf::IntRect(7,175,73,77));
+	Poly.addFrame(sf::IntRect(92, 175, 73, 77));
+	Poly.addFrame(sf::IntRect(177, 175, 73, 77));
+	Poly.addFrame(sf::IntRect(262, 175, 73, 77));
+	Poly.addFrame(sf::IntRect(347, 175, 73, 77));
+	Poly.addFrame(sf::IntRect(432, 175, 73, 77));
+
+	AnimatedSprite Ray(Texture);
+	Ray.addFrame(sf::IntRect(8, 285, 70, 29));
+	Ray.addFrame(sf::IntRect(96, 285, 70, 29));
+	Ray.addFrame(sf::IntRect(184, 285, 70, 29));
+	Ray.addFrame(sf::IntRect(272, 285, 70, 29));
+	Ray.addFrame(sf::IntRect(360, 285, 70, 29));
+	Ray.addFrame(sf::IntRect(448, 285, 70, 29));
+
+	AnimatedSprite Circle(Texture);
+	Circle.addFrame(sf::IntRect(15, 352, 56, 63));
+	Circle.addFrame(sf::IntRect(102, 352, 56, 63));
+	Circle.addFrame(sf::IntRect(189, 352, 56, 63));
+	Circle.addFrame(sf::IntRect(276, 352, 56, 63));
+	Circle.addFrame(sf::IntRect(363, 352, 56, 63));
+	Circle.addFrame(sf::IntRect(450, 352, 56, 63));
 
 	// Setup the NPC
-	GameObject &npc = NPC(npc_animated_sprite);
+	GameObject &npc = NPC(Square,Capsule,Poly,Ray,Circle);
 
 	// Setup the Player
-	GameObject &player = Player(player_animated_sprite);
+	GameObject &player = Player(Square,Capsule,Poly,Ray,Circle);
 
 	//Setup NPC AABB
 	c2AABB aabb_npc;
@@ -73,7 +90,9 @@ int main()
 	circle_npc.r = 10;
 
 	// Initialize Input
-	Input input;
+	Input PlayerInput;
+
+	Input NpcInput;
 
 	// Collision result
 	int result = 0;
@@ -147,16 +166,54 @@ int main()
 			case sf::Event::KeyPressed:
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
 				{
-					player.getAnimatedSprite().setTextureRect(sf::IntRect(3,343,82,82));
+					PlayerInput.setCurrent(Input::Action::Square);
 				}
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
+				{
+					PlayerInput.setCurrent(Input::Action::Capsule);
+				}
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
+				{
+					PlayerInput.setCurrent(Input::Action::Poly);
+				}
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))
+				{
+					PlayerInput.setCurrent(Input::Action::Ray);
+				}
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5))
+				{
+					PlayerInput.setCurrent(Input::Action::Circle);
+				}
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
+				{
+					NpcInput.setCurrent(Input::Action::Square);
+				}
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F2))
+				{
+					NpcInput.setCurrent(Input::Action::Capsule);
+				}
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F3))
+				{
+					NpcInput.setCurrent(Input::Action::Poly);
+				}
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F4))
+				{
+					NpcInput.setCurrent(Input::Action::Ray);
+				}
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::F5))
+				{
+					NpcInput.setCurrent(Input::Action::Circle);
+				}
+				break;
 			default:
-				input.setCurrent(Input::Action::IDLE);
 				break;
 			}
 		}
 
 		// Handle input to Player
-		player.handleInput(input);
+		player.handleInput(PlayerInput);
+
+		npc.handleInput(NpcInput);
 
 		// Update the Player
 		player.update();
@@ -165,15 +222,35 @@ int main()
 		npc.update();
 
 		// Check for collisions
-		result = c2AABBtoAABB(aabb_player, aabb_npc);
+		
+		if (player.getInput() == 0 && npc.getInput() == 0)
+		{
+			result = c2AABBtoAABB(aabb_player, aabb_npc);
+		}
+		else if (player.getInput() == 1 && npc.getInput() == 0)
+		{
+
+		}
+		else if (player.getInput() == 2 && npc.getInput() == 0)
+		{
+
+		}
+		else if (player.getInput() == 3 && npc.getInput() == 0)
+		{
+
+		}
+		else if (player.getInput() == 4 && npc.getInput() == 0)
+		{
+
+		}
+
 		cout << ((result != 0) ? ("Collision") : "") << endl;
-		if (result){
-			player.getAnimatedSprite().setColor(sf::Color(255,0,0));
+		if (result) {
+			player.getAnimatedSprite().setColor(sf::Color(255, 0, 0));
 		}
 		else {
 			player.getAnimatedSprite().setColor(sf::Color(0, 255, 0));
 		}
-
 		// Clear screen
 		window.clear();
 

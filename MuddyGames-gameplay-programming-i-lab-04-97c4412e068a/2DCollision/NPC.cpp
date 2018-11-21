@@ -9,7 +9,8 @@ NPC::NPC() : GameObject()
 	m_player_fsm.setPrevious(new Idle());
 }
 
-NPC::NPC(const AnimatedSprite& s) : GameObject(s)
+NPC::NPC(const AnimatedSprite& s, const AnimatedSprite&c,const AnimatedSprite& p, const AnimatedSprite& r, const AnimatedSprite& cr) 
+	: GameObject(s,c,p,r,cr)
 {
 	m_player_fsm.setCurrent(new Idle());
 	m_player_fsm.setPrevious(new Idle());
@@ -21,40 +22,57 @@ NPC::~NPC()
 
 AnimatedSprite& NPC::getAnimatedSprite()
 {
-	int frame = m_animated_sprite.getCurrentFrame();
-	m_animated_sprite.setTextureRect(m_animated_sprite.getFrame(frame));
-	return m_animated_sprite;
+	if (m_input == 0)
+	{
+		int frame = SquareSprite.getCurrentFrame();
+		SquareSprite.setTextureRect(SquareSprite.getFrame(frame));
+		return SquareSprite;
+	}
+	else if (m_input == 1)
+	{
+		int frame = CapsuleSprite.getCurrentFrame();
+		CapsuleSprite.setTextureRect(CapsuleSprite.getFrame(frame));
+		return CapsuleSprite;
+	}
+	else if (m_input == 2)
+	{
+		int frame = PolySprite.getCurrentFrame();
+		PolySprite.setTextureRect(PolySprite.getFrame(frame));
+		return PolySprite;
+	}
+	else if (m_input == 3)
+	{
+		int frame = RaySprite.getCurrentFrame();
+		RaySprite.setTextureRect(RaySprite.getFrame(frame));
+		return RaySprite;
+	}
+	else if (m_input == 4)
+	{
+		int frame = CircleSprite.getCurrentFrame();
+		CircleSprite.setTextureRect(CircleSprite.getFrame(frame));
+		return CircleSprite;
+	}
 }
 
 void NPC::handleInput(Input in)
 {
 	DEBUG_MSG("Handle Input");
 
-	switch (in.getCurrent())
-	{
-	case Input::Action::IDLE:
-		//std::cout << "Player Idling" << std::endl;
-		m_player_fsm.idle();
-		break;
-	case Input::Action::UP:
-		//std::cout << "Player Up" << std::endl;
-		m_player_fsm.climbing();
-		break;
-	case Input::Action::LEFT:
-		//std::cout << "Player Left" << std::endl;
-		m_player_fsm.jumping();
-		break;
-	case Input::Action::RIGHT:
-		//std::cout << "Player Idling" << std::endl;
-		m_player_fsm.jumping();
-		break;
-	default:
-		break;
-	}
+	m_input = in.getCurrent();
 }
 
 void NPC::update()
 {
 	//std::cout << "Handle Update" << std::endl;
-	m_animated_sprite.update();
+	SquareSprite.update();
+	CapsuleSprite.update();
+	PolySprite.update();
+	RaySprite.update();
+	CircleSprite.update();
 }
+
+int NPC::getInput()
+{
+	return m_input;
+}
+

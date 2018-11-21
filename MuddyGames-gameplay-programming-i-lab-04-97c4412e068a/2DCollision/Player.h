@@ -8,14 +8,17 @@
 
 class Player : public GameObject
 {
+	int t_input = 0;
 
 public:
 	Player();
 	~Player();
-	Player(const AnimatedSprite&);
+	Player(const AnimatedSprite&, const AnimatedSprite&, const AnimatedSprite&, const AnimatedSprite&, const AnimatedSprite&);
 	AnimatedSprite& getAnimatedSprite();
 	void handleInput(Input);
 	void update();
+
+	int getInput();
 };
 
 #endif // !PLAYER_H
