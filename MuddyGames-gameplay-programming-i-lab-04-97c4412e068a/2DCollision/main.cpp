@@ -12,6 +12,7 @@
 using namespace std;
 
 
+
 int main()
 {
 	// Create the main window
@@ -76,7 +77,7 @@ int main()
 	aabb_npc.min = c2V(npc.getAnimatedSprite().getPosition().x, npc.getAnimatedSprite().getPosition().y);
 	aabb_npc.max = c2V(
 		npc.getAnimatedSprite().getPosition().x +
-		npc.getAnimatedSprite().getGlobalBounds().width, 
+		npc.getAnimatedSprite().getGlobalBounds().width,
 		npc.getAnimatedSprite().getPosition().y +
 		npc.getAnimatedSprite().getGlobalBounds().height);
 
@@ -85,9 +86,13 @@ int main()
 	aabb_player.min = c2V(player.getAnimatedSprite().getPosition().x, player.getAnimatedSprite().getPosition().y);
 	aabb_player.max = c2V(player.getAnimatedSprite().getGlobalBounds().width / 6, player.getAnimatedSprite().getGlobalBounds().width / 6);
 
-	c2Circle circle_npc;
-	circle_npc.p = c2V(npc.getAnimatedSprite().getPosition().x , npc.getAnimatedSprite().getPosition().y);
-	circle_npc.r = 10;
+	c2Circle circle_player;
+
+	c2Capsule capsule_player;
+
+	c2Poly poly_player;
+
+	c2Ray ray_player;
 
 	// Initialize Input
 	Input PlayerInput;
@@ -152,6 +157,33 @@ int main()
 			player.getAnimatedSprite().getPosition().y + 
 			player.getAnimatedSprite().getGlobalBounds().height
 		);
+
+		//circle for player
+		circle_player.p = c2V(player.getAnimatedSprite().getPosition().x, player.getAnimatedSprite().getPosition().y);
+		circle_player.r = 10;
+
+		//capsule player
+		capsule_player.r = 21.5;
+		capsule_player.a = c2V(player.getAnimatedSprite().getPosition().x + capsule_player.r, player.getAnimatedSprite().getPosition().y + capsule_player.r);
+		capsule_player.b = c2V(player.getAnimatedSprite().getPosition().x - capsule_player.r + player.getAnimatedSprite().getGlobalBounds().width,
+								player.getAnimatedSprite().getPosition().y + capsule_player.r);
+		
+		//polyplayer
+		poly_player.count = 3;
+		poly_player.verts[0] = c2V(player.getAnimatedSprite().getPosition().x, player.getAnimatedSprite().getPosition().y + player.getAnimatedSprite().getGlobalBounds().height);
+		poly_player.verts[1] = c2V(player.getAnimatedSprite().getPosition().x / 2.0f, player.getAnimatedSprite().getPosition().y);
+		poly_player.verts[2] = c2V(player.getAnimatedSprite().getPosition().x + player.getAnimatedSprite().getGlobalBounds().width,
+			player.getAnimatedSprite().getPosition().y + player.getAnimatedSprite().getGlobalBounds().height);
+
+		c2Poly * poly_player_p = &poly_player;
+
+		c2Norms(poly_player_p->verts, poly_player_p->norms, poly_player_p->count);
+
+		//rayplayer
+
+		ray_player.p = c2V(player.getAnimatedSprite().getPosition().x, player.getAnimatedSprite().getPosition().y);
+		
+		ray_player.t = 41;
 
 		// Process events
 		sf::Event event;
@@ -229,27 +261,27 @@ int main()
 		}
 		else if (player.getInput() == 1 && npc.getInput() == 0)
 		{
-
+			result = c2AABBtoCapsule(aabb_npc,capsule_player);
 		}
 		else if (player.getInput() == 2 && npc.getInput() == 0)
 		{
-
+			result = c2AABBtoPoly(aabb_npc, poly_player_p,0);
 		}
 		else if (player.getInput() == 3 && npc.getInput() == 0)
 		{
-
+			result = c2RaytoAABB(ray_player, aabb_npc,0);
 		}
 		else if (player.getInput() == 4 && npc.getInput() == 0)
 		{
-
+			result = c2CircletoAABB(circle_player, aabb_npc);
 		}
 
 		cout << ((result != 0) ? ("Collision") : "") << endl;
 		if (result) {
-			player.getAnimatedSprite().setColor(sf::Color(255, 0, 0));
+			//player.getAnimatedSprite().setColor(sf::Color(255, 0, 0));
 		}
 		else {
-			player.getAnimatedSprite().setColor(sf::Color(0, 255, 0));
+			//player.getAnimatedSprite().setColor(sf::Color(0, 255, 0));
 		}
 		// Clear screen
 		window.clear();
